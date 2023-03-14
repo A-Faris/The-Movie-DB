@@ -1,0 +1,7 @@
+./cookie_clicker/server.py
+************* Module server
+cookie_clicker/server.py:41:4: C0103: Method name "do_POST" doesn't conform to '(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$' pattern (invalid-name)
+
+-----------------------------------
+Your code has been rated at 9.66/10
+

@@ -1,0 +1,12 @@
+{
+ "files": [
+  {
+   "file_name": "./cookie_clicker/server.py",
+   "errors": [
+    "cookie_clicker/server.py:41:4: C0103: Method name \"do_POST\" doesn't conform to '(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$' pattern (invalid-name)"
+   ],
+   "score": 96.6
+  }
+ ],
+ "average_score": 96.6
+}
