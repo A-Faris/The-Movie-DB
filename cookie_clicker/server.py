@@ -3,10 +3,12 @@ import http.server
 import socketserver
 from http import HTTPStatus
 total_clicks = 0
-   
+
 # Front end: Render a HTML+Javascript Page
+
+
 def html(total_clicks):
-    return  f"""
+    return f"""
         <!DOCTYPE html>
         <head>
             <title>Cookie Clicker</title>
@@ -18,11 +20,13 @@ def html(total_clicks):
             </script>
         </head>
         <h3>Click the cookie to pass the time</h3>
-        <button onclick="doClick()" >&#127850;</button>
+        <button onclick="doClick()" >&#129306;</button>
         <span id="count">{total_clicks} cookies clicked</span>
     """
-    
+
 # Back end: Handle API requests
+
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         global total_clicks
@@ -47,5 +51,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(f'{total_clicks}'.encode())
 
+
 print('Launch API')
-socketserver.TCPServer(('', 80), Handler).serve_forever()
+socketserver.TCPServer(('', 5000), Handler).serve_forever()
