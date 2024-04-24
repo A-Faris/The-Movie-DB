@@ -1,2 +1,3 @@
 def meeting(s: str) -> str:
-    pass
+    return "".join(sorted(["(" + ", ".join(name.split(":")[::-1]) + ")"
+                   for name in s.upper().split(";")]))
