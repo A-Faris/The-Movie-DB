@@ -13,7 +13,7 @@ def get_cursor(conn: connection) -> cursor:
     return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 
-def get_movies(search: str | None = None, sort_by: str | None = None, sort_order: str | None = None) -> list[dict]:
+def get_movies(search: str | None, sort_by: str | None = None, sort_order: str | None = None) -> list:
     """/movies/<int:movie_id>"""
     # Example implementation
     conn = get_connection()
@@ -21,16 +21,12 @@ def get_movies(search: str | None = None, sort_by: str | None = None, sort_order
 
     # TODO: Write query and execute to get movies
     query = "SELECT * FROM movies "
-    vars = ""
     if search:
         query += "WHERE title LIKE %s "
-        vars = f"%{search}%"
-    if sort_by:
-        query += f"ORDER BY {sort_by} "
-        if sort_order:
-            query += f"{sort_order}"
+        if sort_by:
+            query += f"ORDER BY {sort_by} {sort_order}"
 
-    cur.execute(query, (vars,))
+    cur.execute(query, (f"%{search}%",))
 
     data = cur.fetchall()
     conn.commit()
@@ -43,8 +39,7 @@ def get_movie_by_id(movie_id: int) -> dict[str, Any]:
     conn = get_connection()
     cur = get_cursor(conn)
 
-    cur.execute("""SELECT *
-                    FROM movies
+    cur.execute("""SELECT * FROM movies
                     WHERE movie_id = %s""", (movie_id,))
 
     data = cur.fetchone()
@@ -92,7 +87,7 @@ def update_movie(title: str, release_date: date, genre: str, actors: list[str], 
         if attribute:
             cur.execute(f"""UPDATE movies
                         SET {word} = %s
-                        WHERE movie_id = %s;""",
+                        WHERE movie_id = %s; """,
                         (attribute, movie_id))
 
     genre_id = get_id(cur, genre, "genres", "genre", "genre_id")
@@ -100,7 +95,7 @@ def update_movie(title: str, release_date: date, genre: str, actors: list[str], 
     cur.execute(
         """UPDATE genre_assignment
         SET genre_id = %s
-        WHERE movie_id = %s;""",
+        WHERE movie_id = %s; """,
         (genre_id, movie_id))
 
     actor_ids = [get_id(cur, actor, "actors", "actor", "actor_id")
@@ -114,12 +109,12 @@ def update_movie(title: str, release_date: date, genre: str, actors: list[str], 
             """UPDATE crew_assignment
             SET actor_id = %s,
             role_id = %s
-            WHERE movie_id = %s;""",
+            WHERE movie_id = %s; """,
             (actor_id, role_id, movie_id))
 
     cur.execute(
         """SELECT * FROM movies
-        WHERE movie_id = %s;""",
+        WHERE movie_id = %s; """,
         (movie_id,))
 
     data = cur.fetchall()
@@ -134,7 +129,7 @@ def delete_movie(movie_id: int) -> bool:
 
     cur.execute(
         """DELETE FROM movies
-            WHERE movie_id = %s;""", (movie_id,))
+            WHERE movie_id = %s; """, (movie_id,))
 
     data = cur.fetchone()
     conn.commit()
@@ -189,7 +184,7 @@ def search_actor(search_term: str) -> list[str]:
     cur.execute("""SELECT title FROM movies
                 JOIN crew_assignment USING(movie_id)
                 JOIN actors USING(actor_id)
-                WHERE actor LIKE %s""",
+                WHERE actor LIKE % s""",
                 (f"%{search_term}%",))
 
     data = cur.fetchall()
