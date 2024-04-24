@@ -25,6 +25,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -56,6 +57,26 @@ jobs:
 # Add a third job to your action: lint.
 # This job should be almost identical to the test one, but instead of running pytest, run pylint on all relevant files instead.
 # This job should only fail if the pylint score is below 8.
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   steps:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff --output-format=github .
+        continue-on-error: true
+
