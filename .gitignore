@@ -90,3 +90,6 @@ venv/
 .terraform
 
 .venv
+.env
+.env.local
+.env.prod

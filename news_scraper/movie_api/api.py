@@ -1,7 +1,5 @@
-from sqlite3 import connect
-from flask import Flask, current_app, jsonify, request
-from datetime import datetime, date
-from typing import Any
+from flask import Flask, jsonify, request
+from datetime import datetime
 from database import get_movies, get_movie_by_id, create_movie, update_movie, delete_movie, get_genres, get_genre, get_movies_by_genre, search_actor, get_movie_by_country, get_countries
 
 # Note from the Movie DB API team: This half-finished code was written by an intern with no coding experience so expect there to be bugs and issues. Please review the code and make any necessary changes to ensure it is production-ready. Good luck!
@@ -87,7 +85,7 @@ def endpoint_get_movie(movie_id: int):
         country = data.get("country")
         language = data.get("language")
 
-        if not title and not release_date and not genre and not actors and not overview and not status and not budget and not revenue and not country and not language:
+        if not all([title, release_date, genre, actors, overview, status, budget, revenue, country, language]):
             return jsonify({"error": "No fields to update"}), 400
 
         try:

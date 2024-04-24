@@ -3,17 +3,26 @@ import psycopg2.extras
 from psycopg2.extensions import connection, cursor
 from datetime import datetime, date
 from import_movie import import_movies_to_database, get_id
+from os import environ
+from dotenv import load_dotenv
 
 
 def get_connection() -> connection:
-    return psycopg2.connect("dbname=movies user=faris host=localhost")
+    load_dotenv()
+    return psycopg2.connect(
+        user=environ["DATABASE_USERNAME"],
+        password=environ["DATABASE_PASSWORD"],
+        host=environ["DATABASE_IP"],
+        port=environ["DATABASE_PORT"],
+        database=environ["DATABASE_NAME"]
+    )
 
 
 def get_cursor(conn: connection) -> cursor:
     return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 
-def get_movies(search: str | None, sort_by: str | None = None, sort_order: str | None = None) -> list:
+def get_movies(search: str | None, sort_by: str | None = None, sort_order: str | None = None) -> list[dict] | list:
     """/movies/<int:movie_id>"""
     # Example implementation
     conn = get_connection()
@@ -137,7 +146,7 @@ def delete_movie(movie_id: int) -> bool:
     return data != None
 
 
-def get_genres() -> list[dict[str, str]]:
+def get_genres() -> list[dict[str, str]] | list:
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -177,7 +186,7 @@ def get_movies_by_genre(genre_id: int) -> list[dict[str, Any]]:
     return data
 
 
-def search_actor(search_term: str) -> list[str]:
+def search_actor(search_term: str) -> list[str] | list:
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -193,7 +202,7 @@ def search_actor(search_term: str) -> list[str]:
     return data
 
 
-def get_movie_by_country(country_code, sort_by: str | None = None, sort_order: str | None = None) -> list[dict]:
+def get_movie_by_country(country_code, sort_by: str | None = None, sort_order: str | None = None) -> list[dict] | list:
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -201,9 +210,7 @@ def get_movie_by_country(country_code, sort_by: str | None = None, sort_order: s
             JOIN countries USING(country_id)
             WHERE country = %s """
     if sort_by:
-        query += f"ORDER BY {sort_by} "
-        if sort_order:
-            query += f"{sort_order}"
+        query += f"ORDER BY {sort_by} {sort_order}"
 
     cur.execute(query, (country_code,))
 
