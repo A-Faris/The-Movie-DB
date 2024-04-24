@@ -13,8 +13,8 @@ def validate_sort_by(sort_by: str | None) -> bool:
     return sort_by in ["title", "release_date", "genre", "revenue", "budget", "score", None]
 
 
-def validate_sort_order(sort_order: str | None) -> bool:
-    return sort_order in ["asc", "desc", None]
+def validate_sort_order(sort_order: str) -> bool:
+    return sort_order in ["asc", "desc"]
 
 
 @app.route("/", methods=["GET"])
