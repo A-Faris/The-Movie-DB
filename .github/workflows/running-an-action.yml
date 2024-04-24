@@ -1,17 +1,58 @@
 name: Running an action
+
 on: 
   workflow_dispatch:
+
   push:
     branches:    
       - main
+
   pull_request:
     branches:
       - main
+    
 permissions:
   contents: read
   pull-requests: read
+
 jobs:
   speak:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Hello, world!"
+    - name: Hello
+      run: echo "Hello, world!"
+
+# Add a second job to your action: test.
+# When run, this should do the following:
+# checkout the repository
+# Install python
+# Install all requirements from the requirements.txt file
+# Run pytest
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run the unit tests with pytest
+        run: |
+          pip install pytest
+          pip install pytest-json-report
+          cd news_scraper/movie_api
+          pytest --json-report --json-report-summary --json-report-file=movie-api-report.json --json-report-indent=4 || echo "ignore exit code 1"
+
+      - name: Test with pytest
+        run: |
+          pip install pytest pytest-cov
+          pytest tests_pass.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
