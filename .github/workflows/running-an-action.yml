@@ -23,22 +23,16 @@ jobs:
     - name: Hello
       run: echo "Hello, world!"
 
-# Add a second job to your action: test.
-# When run, this should do the following:
-# checkout the repository
-# Install python
-# Install all requirements from the requirements.txt file
-# Run pytest
   test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.x'
           cache: 'pip'
 
       - name: Install dependencies
@@ -58,3 +52,10 @@ jobs:
           pip install pytest pytest-cov
           cd news_scraper/movie_api
           pytest test_pass.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+# Add a third job to your action: lint.
+# This job should be almost identical to the test one, but instead of running pytest, run pylint on all relevant files instead.
+# This job should only fail if the pylint score is below 8.
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
