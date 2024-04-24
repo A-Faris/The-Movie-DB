@@ -8,3 +8,6 @@ def diamond(n: int) -> str:
     # return output
 
     return "\n".join([abs(i)*" " + (n-abs(i)*2)*"*" for i in range(-n//2+1, n//2+1)]) + "\n"
+
+
+print(diamond(5))

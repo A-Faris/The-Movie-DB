@@ -2,7 +2,21 @@
 
 import csv
 import psycopg2.extras
+from psycopg2.extensions import connection, cursor
 from rich.progress import track
+import os
+from dotenv import load_dotenv
+
+
+def get_connection() -> connection:
+    load_dotenv()
+    return psycopg2.connect(
+        user=os.getenv("DATABASE_USERNAME"),
+        password=os.getenv("DATABASE_PASSWORD"),
+        host=os.getenv("DATABASE_IP"),
+        port=os.getenv("DATABASE_PORT"),
+        database=os.getenv("DATABASE_NAME")
+    )
 
 
 def load_csv(filename: str) -> list[dict]:
@@ -38,8 +52,7 @@ def get_movie_id(cur, title, date, score, overview, orig_title, status, language
 
 
 def import_movies_to_database(movies: list[dict]):
-    conn = psycopg2.connect("dbname=movies user=faris host=localhost")
-
+    conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     for movie in track(movies, description="Adding movies"):
