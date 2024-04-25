@@ -45,13 +45,13 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-json-report
-          cd news_scraper/movie_api
+          > news_scraper/movie_api
           pytest --json-report --json-report-summary --json-report-file=movie-api-report.json --json-report-indent=4 || echo "ignore exit code 1"
 
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
-          cd news_scraper/movie_api
+          > news_scraper/movie_api
           pytest test_pass.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
 # Add a third job to your action: lint.
@@ -75,8 +75,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Lint with pylint
+      - name: Analysing the code with pylint
         run: |
-          cd news_scraper/movie_api
-          pylint database.py
-          > news_scraper/movie_api/pylint_score.json
+          > news_scraper/movie_api/pylint_score
+          find . -path "./.utils/*" -prune -o -name '*.py' -print \
+          -exec pylint --rcfile ./.pylintrc {} \; \
+
+      - name: Obtain average_score from JSON
+        id: average_score
+        run: |
+          echo "SCORE=$(jq '.average_score' code_review/report.json)" >> $GITHUB_ENV
