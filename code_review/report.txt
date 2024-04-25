@@ -116,23 +116,6 @@ news_scraper/movie_api/import_movie.py:5:0: W0611: Unused cursor imported from p
 -----------------------------------
 Your code has been rated at 9.11/10
 
-./news_scraper/movie_api/test_pass.py
-************* Module test_pass
-news_scraper/movie_api/test_pass.py:1:0: W0612: Unused variable 'pytest' (unused-variable)
-news_scraper/movie_api/test_pass.py:8:0: W0612: Unused variable 'test_pass' (unused-variable)
-news_scraper/movie_api/test_pass.py:2:0: W0612: Unused variable 'json' (unused-variable)
-news_scraper/movie_api/test_pass.py:3:0: W0612: Unused variable 'datetime' (unused-variable)
-news_scraper/movie_api/test_pass.py:4:0: W0612: Unused variable 'app' (unused-variable)
-news_scraper/movie_api/test_pass.py:5:0: W0612: Unused variable 'patch' (unused-variable)
-news_scraper/movie_api/test_pass.py:1:0: W0611: Unused import pytest (unused-import)
-news_scraper/movie_api/test_pass.py:2:0: W0611: Unused json imported from flask (unused-import)
-news_scraper/movie_api/test_pass.py:3:0: W0611: Unused datetime imported from datetime (unused-import)
-news_scraper/movie_api/test_pass.py:4:0: W0611: Unused app imported from api (unused-import)
-news_scraper/movie_api/test_pass.py:5:0: W0611: Unused patch imported from unittest.mock (unused-import)
-
------------------------------------
-Your code has been rated at 0.00/10
-
 ./news_scraper/movie_api/database.py
 ************* Module database
 news_scraper/movie_api/database.py:60:0: C0301: Line too long (172/150) (line-too-long)
