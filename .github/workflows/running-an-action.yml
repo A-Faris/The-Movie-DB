@@ -142,10 +142,10 @@ jobs:
       - name: Committing logs and badge to the repository
         if: github.repository != 'sigma-labs-xyz/coursework-template'
         run: |
-          git config --global user.name "SigmaBot"
-          git config --global user.email "coaches@sigmalabs.co.uk"
+          git config --global user.name "Faris-Abulula"
+          git config --global user.email "abululb02@gmail.com"
           git pull
           git add .github/badges/done.svg
           git checkout main
-          git diff-index --quiet HEAD || git commit -am "SigmaBot: Update Done"
+          git diff-index --quiet HEAD || git commit -am "Update Done"
           git push
