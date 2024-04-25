@@ -118,7 +118,7 @@ jobs:
         # Create the directory where badges will be saved, if needed
       - name: Create destination directory for badge
         env:
-          BADGE_PATH: .github/badges/done.svg
+          BADGE_PATH: .github/badges/code_quality.svg
         run: mkdir -p "${BADGE_PATH%/*}"
 
         # Use the output from the `average_score` step
