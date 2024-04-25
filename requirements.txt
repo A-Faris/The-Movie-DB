@@ -1,4 +1,5 @@
 pytest
+pylint
 requests
 flask
 psycopg2-binary
