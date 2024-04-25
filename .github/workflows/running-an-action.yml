@@ -124,7 +124,7 @@ jobs:
         # Use the output from the `average_score` step
       - name: Generate the badge SVG image
         uses: emibcn/badge-action@v1
-        id: quality_badge
+        id: done_badge
         with:
           label: 'Done: '
           status: 'Yes'
