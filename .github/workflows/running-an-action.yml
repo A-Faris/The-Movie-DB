@@ -45,14 +45,14 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-json-report
-          > news_scraper/movie_api
+          cd news_scraper/movie_api
           pytest --json-report --json-report-summary --json-report-file=movie-api-report.json --json-report-indent=4 || echo "ignore exit code 1"
 
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
-          > news_scraper/movie_api
-          pytest test_pass.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+          > news_scraper/movie_api/test_pass.py
+          pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
 # Add a third job to your action: lint.
 # This job should be almost identical to the test one, but instead of running pytest, run pylint on all relevant files instead.
@@ -84,4 +84,26 @@ jobs:
       - name: Obtain average_score from JSON
         id: average_score
         run: |
-          echo "SCORE=$(jq '.average_score' code_review/report.json)" >> $GITHUB_ENV
+          echo "SCORE=$(jq '.average_score' news_scraper/movie_api/pylint_score)" >> $GITHUB_ENV
+    
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to Staging server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          EXCLUDE: "/dist/, /node_modules/"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al
+          SCRIPT_AFTER: |
+            whoami
+            ls -al
+            echo $RSYNC_STDOUT
