@@ -77,7 +77,7 @@ jobs:
       - name: Lint with pylint
         run: |
           cd news_scraper/movie_api
-          find . -name '*.py' -print -exec pylint --fail-under=8.0 --recursive=y --enable=W {} \;
+          pylint *.py --fail-under=8.0
 
 
       # - name: Analysing the code with pylint
