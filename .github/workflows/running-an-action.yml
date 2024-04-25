@@ -43,17 +43,12 @@ jobs:
 
       - name: Run the unit tests with pytest
         run: |
-          pip install pytest
+          pip install pytest pytest-cov
           pip install pytest-json-report
           cd news_scraper/movie_api
           pytest --json-report --json-report-summary --json-report-file=movie-api-report.json --json-report-indent=4 || echo "ignore exit code 1"
-
-      - name: Test with pytest
-        run: |
-          pip install pytest pytest-cov
-          cd news_scraper/movie_api
           pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-        continue-on-error: true
+        continue-on-error: false
 
 # Add a third job to your action: lint.
 # This job should be almost identical to the test one, but instead of running pytest, run pylint on all relevant files instead.
