@@ -111,7 +111,7 @@ jobs:
           #   echo $RSYNC_STDOUT
   
   badge:
-    needs: [deploy]
+    # needs: [deploy]
     runs-on: ubuntu-latest
     
     steps:
@@ -145,7 +145,7 @@ jobs:
           git config --global user.name "Faris-Abulula"
           git config --global user.email "abululb02@gmail.com"
           git pull
-          git add .github/badges/done.svg
-          git checkout main
-          git diff-index --quiet HEAD || git commit -am "Update Done"
-          git push
+        # git add .github/badges/done.svg
+        # git checkout main
+        # git diff-index --quiet HEAD || git commit -am "Update Done"
+        # git push
