@@ -77,7 +77,6 @@ jobs:
 
       - name: Lint with pylint
         run: |
-          pip install pylint
           cd news_scraper/movie_api
           pylint database.py
-
+          > news_scraper/movie_api/pylint_score.json
