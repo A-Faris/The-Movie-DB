@@ -130,7 +130,7 @@ jobs:
         id: done_badge
         with:
           label: 'Done: '
-          status: 'Nope'
+          status: 'Yes'
           color: 'blue'
           path: .github/badges/done.svg
           scale: 1.5
