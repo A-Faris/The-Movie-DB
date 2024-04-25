@@ -1,6 +1,7 @@
 [![badge](./.github/badges/code_quality.svg)](./code_review/report.json)
 [![badge](./.github/badges/total_errors.svg)](./code_review/report.json)
 [![badge](./.github/badges/done.svg)](./code_review/report.json)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2F.github%2Fbadges%2Fdone.svg%2Fbadge%3Fref%3Dmain&style=plastic)](https://actions-badge.atrox.dev/.github/badges/done.svg/goto?ref=main)
 
 # 🧑‍💻 Sigma Labs Coursework
 
