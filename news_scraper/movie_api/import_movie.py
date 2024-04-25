@@ -5,13 +5,15 @@ import psycopg2.extras
 from psycopg2.extensions import connection, cursor
 from rich.progress import track
 import os
+from os import environ
 from dotenv import load_dotenv
 
 
 def get_connection() -> connection:
     load_dotenv()
     return psycopg2.connect(
-        user=os.getenv("DATABASE_USERNAME"),
+        user=environ["DATABASE_USERNAME"],
+        # user=os.getenv("DATABASE_USERNAME"),
         password=os.getenv("DATABASE_PASSWORD"),
         host=os.getenv("DATABASE_IP"),
         port=os.getenv("DATABASE_PORT"),
