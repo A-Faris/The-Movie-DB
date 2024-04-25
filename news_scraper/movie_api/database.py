@@ -22,7 +22,9 @@ def get_cursor(conn: connection) -> cursor:
     return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 
-def get_movies(search: str | None, sort_by: str | None = None, sort_order: str | None = None) -> list[dict] | list:
+def get_movies(search: str | None,
+               sort_by: str | None = None,
+               sort_order: str | None = None) -> list[dict] | list:
     """/movies/<int:movie_id>"""
     # Example implementation
     conn = get_connection()

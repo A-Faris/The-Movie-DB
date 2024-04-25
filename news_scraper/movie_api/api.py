@@ -1,27 +1,45 @@
 from flask import Flask, jsonify, request
 from datetime import datetime
-from database import get_movies, get_movie_by_id, create_movie, update_movie, delete_movie, get_genres, get_genre, get_movies_by_genre, search_actor, get_movie_by_country, get_countries
+from database import (
+    get_movies,
+    get_movie_by_id,
+    create_movie,
+    update_movie,
+    delete_movie,
+    get_genres,
+    get_genre,
+    get_movies_by_genre,
+    search_actor,
+    get_movie_by_country,
+    get_countries
+)
 
-# Note from the Movie DB API team: This half-finished code was written by an intern with no coding experience so expect there to be bugs and issues. Please review the code and make any necessary changes to ensure it is production-ready. Good luck!
+# Note from the Movie DB API team: This half-finished code was written by an intern
+# with no coding experience so expect there to be bugs and issues.
+# Please review the code and make any necessary changes to ensure it's production-ready. Good luck!
 
 app = Flask(__name__)
 
 
 def validate_sort_by(sort_by: str | None) -> bool:
+    """Validate sort by"""
     return sort_by in ["title", "release_date", "genre", "revenue", "budget", "score", None]
 
 
 def validate_sort_order(sort_order: str) -> bool:
+    """Validate sort order"""
     return sort_order in ["asc", "desc"]
 
 
 @app.route("/", methods=["GET"])
 def endpoint_index():
+    """Endpoint index"""
     return jsonify({"message": "Welcome to the Movie API"})
 
 
 @app.route("/movies", methods=["GET", "POST"])
 def endpoint_get_movies():
+    """Endpoint get movies"""
 
     if request.method == "GET":
         sort_by = request.args.get("sort_by")
@@ -54,7 +72,7 @@ def endpoint_get_movies():
         country: str = data.get("country")
         language: str = data.get("language")
 
-        if not title or not release_date or not genre or not country or not language or not actors:
+        if not any([title, release_date, genre, country, language, actors]):
             return jsonify({"error": "Missing required fields"}), 400
 
         try:
@@ -63,15 +81,19 @@ def endpoint_get_movies():
             return jsonify({"error": "Invalid release_date format. Please use MM/DD/YYYY"}), 400
 
         try:
-            movie = create_movie(title, release_date, genre, actors,
-                                 overview, status, budget, revenue, country, language)
-            return jsonify({"message": "Movie created successfully", 'success': True, "movie": movie}), 201
+            movie = create_movie(title, release_date, genre, actors, overview,
+                                 status, budget, revenue, country, language)
+            return jsonify({"message": "Movie created successfully",
+                            'success': True,
+                            "movie": movie}), 201
+
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
 
 @app.route("/movies/<int:movie_id>", methods=["GET", "PATCH", "DELETE"])
 def endpoint_get_movie(movie_id: int):
+    """Endpoint get movie"""
     if request.method == "PATCH":
         data = request.get_json
         title = data.get("title")
@@ -85,7 +107,8 @@ def endpoint_get_movie(movie_id: int):
         country = data.get("country")
         language = data.get("language")
 
-        if not all([title, release_date, genre, actors, overview, status, budget, revenue, country, language]):
+        if not all([title, release_date, genre, actors, overview,
+                    status, budget, revenue, country, language]):
             return jsonify({"error": "No fields to update"}), 400
 
         try:
@@ -142,7 +165,8 @@ def endpoint_movies_by_genre(genre_id: int):
 
 @app.route("/actors", methods=["GET"])
 def endpoint_search_actor():
-    """Endpoint should return a list of actors based on the search term provided in the query string and all of the films each of them has appeared in."""
+    """Endpoint should return a list of actors based on the search term provided
+    in the query string and all of the films each of them has appeared in."""
     search_term = request.args.get("search")
 
     if not search_term:
@@ -158,7 +182,8 @@ def endpoint_search_actor():
 
 @app.route("/countries/<string:country_code>", methods=["GET"])
 def endpoint_get_movies_by_country(country_code: str):
-    """Get a list of movie details by country. Optionally, the results can be sorted by a specific field in ascending or descending order."""
+    """Get a list of movie details by country.
+    Optionally, the results can be sorted by a specific field in ascending or descending order."""
 
     if country_code not in get_countries():
         return jsonify({"error": "Country not found"}), 404

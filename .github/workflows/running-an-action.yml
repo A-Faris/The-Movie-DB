@@ -78,18 +78,6 @@ jobs:
         run: |
           cd news_scraper/movie_api
           pylint *.py --fail-under=8.0
-
-
-      # - name: Analysing the code with pylint
-      #   run: |
-      #     > news_scraper/movie_api/pylint_score.json
-      #     find . -path "./.utils/*" -prune -o -name '*.py' -print \
-      #     -exec pylint --rcfile ./.pylintrc {} \; \
-
-      # - name: Obtain average_score from JSON
-      #   id: average_score
-      #   run: |
-      #     echo "SCORE=$(jq '.average_score' news_scraper/movie_api/pylint_score.json)" >> $GITHUB_ENV
     
   deploy:
     needs: [test, lint]
