@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import pytest
 from flask import json
 from datetime import datetime
