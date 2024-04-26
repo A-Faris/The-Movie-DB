@@ -46,7 +46,7 @@ jobs:
           > code_review/report.txt
           > code_review/report.json
           find . -path "./.utils/*" -prune -o -name '*.py' -print \
-          -exec pylint --rcfile ./.pylintrc {} \; \
+          -exec pylint --load-plugins=pylint_flask --rcfile ./.pylintrc {} \; \
           >> code_review/report.txt
 
       - name: Converting logs into JSON
