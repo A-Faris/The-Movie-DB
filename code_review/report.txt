@@ -41,29 +41,3 @@ news_scraper/movie_api/import_movie.py:42:0: R0913: Too many arguments (11/10) (
 Your code has been rated at 9.78/10
 
 ./news_scraper/movie_api/database.py
-************* Module database
-news_scraper/movie_api/database.py:29:23: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:30:24: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:31:27: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:31:49: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:84:0: R0913: Too many arguments (11/10) (too-many-arguments)
-news_scraper/movie_api/database.py:161:20: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:204:38: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:221:48: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:222:37: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:222:59: E1131: unsupported operand type(s) for | (unsupported-binary-operation)
-news_scraper/movie_api/database.py:29:0: W0612: Unused variable 'get_movies' (unused-variable)
-news_scraper/movie_api/database.py:52:0: W0612: Unused variable 'get_movie_by_id' (unused-variable)
-news_scraper/movie_api/database.py:66:0: W0612: Unused variable 'create_movie' (unused-variable)
-news_scraper/movie_api/database.py:84:0: W0612: Unused variable 'update_movie' (unused-variable)
-news_scraper/movie_api/database.py:146:0: W0612: Unused variable 'delete_movie' (unused-variable)
-news_scraper/movie_api/database.py:161:0: W0612: Unused variable 'get_genres' (unused-variable)
-news_scraper/movie_api/database.py:174:0: W0612: Unused variable 'get_genre' (unused-variable)
-news_scraper/movie_api/database.py:188:0: W0612: Unused variable 'get_movies_by_genre' (unused-variable)
-news_scraper/movie_api/database.py:204:0: W0612: Unused variable 'search_actor' (unused-variable)
-news_scraper/movie_api/database.py:221:0: W0612: Unused variable 'get_movie_by_country' (unused-variable)
-news_scraper/movie_api/database.py:241:0: W0612: Unused variable 'get_countries' (unused-variable)
-
------------------------------------
-Your code has been rated at 5.04/10
-
