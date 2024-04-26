@@ -55,15 +55,6 @@ jobs:
           pytest
         continue-on-error: true
 
-      # - name: Run the unit tests with pytest
-      #   run: |
-      #     pip install pytest pytest-cov
-      #     pip install pytest-json-report
-      #     cd news_scraper/movie_api
-      #     pytest --json-report --json-report-summary --json-report-file=movie-api-report.json --json-report-indent=4 || echo "ignore exit code 1"
-      #     pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-      #   continue-on-error: true
-
   lint:
     runs-on: ubuntu-latest
 
@@ -92,23 +83,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Deploy to Staging server
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          # ARGS: "-rlgoDzvc -i"
-          # SOURCE: "dist/"
+          SOURCE: "news_scraper/movie_api"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          # EXCLUDE: "/dist/, /node_modules/"
-          # SCRIPT_BEFORE: |
-          #   whoami
-          #   ls -al
-          # SCRIPT_AFTER: |
-          #   whoami
-          #   ls -al
-          #   echo $RSYNC_STDOUT
   
   badge:
     needs: [deploy]
@@ -118,13 +102,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
-        # Create the directory where badges will be saved, if needed
       - name: Create destination directory for badge
         env:
           BADGE_PATH: .github/badges/done.svg
         run: mkdir -p "${BADGE_PATH%/*}"
 
-        # Use the output from the `average_score` step
       - name: Generate the badge SVG image
         uses: emibcn/badge-action@v1
         id: done_badge
