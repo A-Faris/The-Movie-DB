@@ -1,5 +1,4 @@
 """Database for Movie API"""
-# pylint: skip-file
 
 from typing import Any
 from os import environ
