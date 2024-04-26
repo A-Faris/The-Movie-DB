@@ -1,13 +1,16 @@
+"""Database for Movie API"""
+
 from typing import Any
+from os import environ
+from datetime import date
 import psycopg2.extras
 from psycopg2.extensions import connection, cursor
-from datetime import datetime, date
-from import_movie import import_movies_to_database, get_id
-from os import environ
 from dotenv import load_dotenv
+from import_movie import import_movies_to_database, get_id
 
 
 def get_connection() -> connection:
+    """Get Connection"""
     load_dotenv()
     return psycopg2.connect(
         user=environ["DATABASE_USERNAME"],
@@ -19,6 +22,7 @@ def get_connection() -> connection:
 
 
 def get_cursor(conn: connection) -> cursor:
+    """Get Cursor"""
     return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 
@@ -30,7 +34,6 @@ def get_movies(search: str | None,
     conn = get_connection()
     cur = get_cursor(conn)
 
-    # TODO: Write query and execute to get movies
     query = "SELECT * FROM movies "
     if search:
         query += "WHERE title LIKE %s "
@@ -47,6 +50,7 @@ def get_movies(search: str | None,
 
 
 def get_movie_by_id(movie_id: int) -> dict[str, Any]:
+    """Get movie by ID"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -59,7 +63,9 @@ def get_movie_by_id(movie_id: int) -> dict[str, Any]:
     return data
 
 
-def create_movie(title: str, release_date: date, genre: str, actors: list[str], overview: str, status: str, budget: int, revenue: int, country: str, language: str) -> dict:
+def create_movie(title: str, release_date: date, genre: str, actors: list[str], overview: str,
+                 status: str, budget: int, revenue: int, country: str, language: str) -> dict:
+    """Create movie"""
     data = import_movies_to_database([{"title": title,
                                        "release_date": release_date,
                                        "score": 10,
@@ -75,7 +81,10 @@ def create_movie(title: str, release_date: date, genre: str, actors: list[str], 
     return data[-1]
 
 
-def update_movie(title: str, release_date: date, genre: str, actors: list[str], overview: str, status: str, budget: int, revenue: int, country: str, language: str, movie_id: int) -> dict[str, Any]:
+def update_movie(title: str, release_date: date, genre: str, actors: list[str],
+                 overview: str, status: str, budget: int, revenue: int,
+                 country: str, language: str, movie_id: int) -> dict[str, Any]:
+    """Update movie"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -135,6 +144,7 @@ def update_movie(title: str, release_date: date, genre: str, actors: list[str], 
 
 
 def delete_movie(movie_id: int) -> bool:
+    """Delete movie"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -145,10 +155,11 @@ def delete_movie(movie_id: int) -> bool:
     data = cur.fetchone()
     conn.commit()
     cur.close()
-    return data != None
+    return data is not None
 
 
 def get_genres() -> list[dict[str, str]] | list:
+    """Get genres"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -161,6 +172,7 @@ def get_genres() -> list[dict[str, str]] | list:
 
 
 def get_genre(genre_id: int) -> dict:
+    """Get genre"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -174,6 +186,7 @@ def get_genre(genre_id: int) -> dict:
 
 
 def get_movies_by_genre(genre_id: int) -> list[dict[str, Any]]:
+    """Get movies by genre"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -189,6 +202,7 @@ def get_movies_by_genre(genre_id: int) -> list[dict[str, Any]]:
 
 
 def search_actor(search_term: str) -> list[str] | list:
+    """Search actor"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -204,7 +218,9 @@ def search_actor(search_term: str) -> list[str] | list:
     return data
 
 
-def get_movie_by_country(country_code, sort_by: str | None = None, sort_order: str | None = None) -> list[dict] | list:
+def get_movie_by_country(country_code, sort_by: str | None = None,
+                         sort_order: str | None = None) -> list[dict] | list:
+    """Get movie by country"""
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -223,6 +239,7 @@ def get_movie_by_country(country_code, sort_by: str | None = None, sort_order: s
 
 
 def get_countries() -> list[str]:
+    """Get countries"""
     conn = get_connection()
     cur = get_cursor(conn)
 

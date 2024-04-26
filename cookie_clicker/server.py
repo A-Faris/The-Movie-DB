@@ -1,20 +1,21 @@
-# This is a full-stack app in a single file
+"""This is a full-stack app in a single file"""
 import http.server
 import socketserver
 from http import HTTPStatus
-total_clicks = 0
+TOTAL_CLICKS = 0
 
 # Front end: Render a HTML+Javascript Page
 
 
 def html(total_clicks):
+    """html"""
     return f"""
         <!DOCTYPE html>
         <head>
             <title>Cookie Clicker</title>
             <script>
-                const update = count => document.getElementById("count").innerText = `${{count}} cookies clicked`
-                const doClick = async () => update(await (await fetch('/api/click', {{method: "POST"}})).json())
+const update = count => document.getElementById("count").innerText = `${{count}} cookies clicked`
+const doClick = async () => update(await (await fetch('/api/click', {{method: "POST"}})).json())
                 const fetchClicks = async () => update(await (await fetch("/api/count")).json())
                 setInterval(fetchClicks, 1000)
             </script>
@@ -28,28 +29,31 @@ def html(total_clicks):
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
+    """Handler class"""
+
     def do_GET(self):
-        global total_clicks
-        if (self.path == '/'):
+        """GET"""
+        if self.path == '/':
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            self.wfile.write(bytes(html(total_clicks), "utf8"))
+            self.wfile.write(bytes(html(TOTAL_CLICKS), "utf8"))
 
-        if (self.path == '/api/count'):
+        if self.path == '/api/count':
             self.send_response(HTTPStatus.OK)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(f'{total_clicks}'.encode())
+            self.wfile.write(f'{TOTAL_CLICKS}'.encode())
 
-    def do_POST(self):
-        global total_clicks
-        if (self.path == '/api/click'):
-            total_clicks += 1
+    def do_post(self):
+        """POST"""
+        global TOTAL_CLICKS
+        if self.path == '/api/click':
+            TOTAL_CLICKS += 1
             self.send_response(HTTPStatus.OK)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(f'{total_clicks}'.encode())
+            self.wfile.write(f'{TOTAL_CLICKS}'.encode())
 
 
 print('Launch API')

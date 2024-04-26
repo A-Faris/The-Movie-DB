@@ -1,28 +1,28 @@
 """A script to import all of the movies in imdb_movies.csv into the database"""
 
 import csv
-import psycopg2.extras
-from psycopg2.extensions import connection, cursor
-from rich.progress import track
-import os
 from os import environ
+from rich.progress import track
 from dotenv import load_dotenv
+import psycopg2.extras
+from psycopg2.extensions import connection
 
 
 def get_connection() -> connection:
+    """Get connection"""
     load_dotenv()
     return psycopg2.connect(
         user=environ["DATABASE_USERNAME"],
-        # user=os.getenv("DATABASE_USERNAME"),
-        password=os.getenv("DATABASE_PASSWORD"),
-        host=os.getenv("DATABASE_IP"),
-        port=os.getenv("DATABASE_PORT"),
-        database=os.getenv("DATABASE_NAME")
+        password=environ["DATABASE_PASSWORD"],
+        host=environ["DATABASE_IP"],
+        port=environ["DATABASE_PORT"],
+        database=environ["DATABASE_NAME"]
     )
 
 
 def load_csv(filename: str) -> list[dict]:
-    with open(filename, newline='') as f:
+    """Load csv"""
+    with open(filename, newline='', encoding="utf-8") as f:
         return list(csv.DictReader(f, skipinitialspace=True))
 
 
@@ -39,14 +39,18 @@ def get_id(cur, value, table, attribute, table_id):
     return cur.fetchone()[table_id]
 
 
-def get_movie_id(cur, title, date, score, overview, orig_title, status, language_id, budget, revenue, country_id):
+def get_movie_id(cur, title, date, score, overview, orig_title,
+                 status, language_id, budget, revenue, country_id):
+    """Get movie ID"""
     cur.execute(
-        """INSERT INTO movies(title, release_date, score, overview, orig_title, status, language_id, budget, revenue, country_id)
+        """INSERT INTO movies(title, release_date, score, overview,
+        orig_title, status, language_id, budget, revenue, country_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT DO NOTHING""", (title, date, score, overview, orig_title, status, language_id, budget, revenue, country_id)
+        ON CONFLICT DO NOTHING""", (title, date, score, overview, orig_title,
+                                    status, language_id, budget, revenue, country_id)
     )
 
-    cur.execute(f"""SELECT movie_id
+    cur.execute("""SELECT movie_id
                     FROM movies
                     WHERE title = %s""", (title,))
 
@@ -54,6 +58,7 @@ def get_movie_id(cur, title, date, score, overview, orig_title, status, language
 
 
 def import_movies_to_database(movies: list[dict]):
+    """Import movies to database"""
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
@@ -110,5 +115,5 @@ def import_movies_to_database(movies: list[dict]):
 
 
 if __name__ == "__main__":
-    movies = load_csv("imdb_movies.csv")
-    import_movies_to_database(movies)
+    load_movies = load_csv("imdb_movies.csv")
+    import_movies_to_database(load_movies)

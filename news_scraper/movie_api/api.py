@@ -1,5 +1,7 @@
-from flask import Flask, jsonify, request
+"""Movie API"""
+
 from datetime import datetime
+from flask import Flask, jsonify, request
 from database import (
     get_movies,
     get_movie_by_id,
@@ -37,104 +39,108 @@ def endpoint_index():
     return jsonify({"message": "Welcome to the Movie API"})
 
 
-@app.route("/movies", methods=["GET", "POST"])
+@app.route("/movies", methods=["GET"])
 def endpoint_get_movies():
     """Endpoint get movies"""
+    sort_by = request.args.get("sort_by")
+    sort_order = request.args.get("sort_order", "asc")
+    search = request.args.get("search")
 
-    if request.method == "GET":
-        sort_by = request.args.get("sort_by")
-        sort_order = request.args.get("sort_order", "asc")
-        search = request.args.get("search")
+    if not validate_sort_by(sort_by):
+        return jsonify({"error": "Invalid sort_by parameter"}), 400
 
-        if not validate_sort_by(sort_by):
-            return jsonify({"error": f"Invalid sort_by parameter"}), 400
+    if not validate_sort_order(sort_order):
+        return jsonify({"error": "Invalid sort_order parameter"}), 400
 
-        if not validate_sort_order(sort_order):
-            return jsonify({"error": "Invalid sort_order parameter"}), 400
+    movies = get_movies(search, sort_by, sort_order)
 
-        movies = get_movies(search, sort_by, sort_order)
+    if not movies:
+        return jsonify({"error": "No movies found"}), 404
 
-        if not movies:
-            return jsonify({"error": "No movies found"}), 404
-
-        return jsonify(movies), 200
-
-    elif request.method == "POST":
-        data = request.get_json
-        title = data.get["title"]
-        release_date = data.get["release_date"]
-        genre = data.get["genre"]
-        actors = data.get("actors", [])
-        overview: str = data.get("overview", "")
-        status = data.get("status", "released")
-        budget: int = data.get("budget", 0)
-        revenue: int = data.get("revenue", 0)
-        country: str = data.get("country")
-        language: str = data.get("language")
-
-        if not any([title, release_date, genre, country, language, actors]):
-            return jsonify({"error": "Missing required fields"}), 400
-
-        try:
-            datetime.strptime(release_date, "%m/%d/%Y")
-        except ValueError:
-            return jsonify({"error": "Invalid release_date format. Please use MM/DD/YYYY"}), 400
-
-        try:
-            movie = create_movie(title, release_date, genre, actors, overview,
-                                 status, budget, revenue, country, language)
-            return jsonify({"message": "Movie created successfully",
-                            'success': True,
-                            "movie": movie}), 201
-
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
+    return jsonify(movies), 200
 
 
-@app.route("/movies/<int:movie_id>", methods=["GET", "PATCH", "DELETE"])
+@app.route("/movies", methods=["POST"])
+def endpoint_post_movies():
+    """Endpoint post movies"""
+    data = request.get_json
+    title = data.get["title"]
+    release_date = data.get["release_date"]
+    genre = data.get["genre"]
+    actors = data.get("actors", [])
+    overview: str = data.get("overview", "")
+    status = data.get("status", "released")
+    budget: int = data.get("budget", 0)
+    revenue: int = data.get("revenue", 0)
+    country: str = data.get("country")
+    language: str = data.get("language")
+
+    if not any([title, release_date, genre, country, language, actors]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+        datetime.strptime(release_date, "%m/%d/%Y")
+    except ValueError:
+        return jsonify({"error": "Invalid release_date format. Please use MM/DD/YYYY"}), 400
+
+    try:
+        movie = create_movie(title, release_date, genre, actors, overview,
+                             status, budget, revenue, country, language)
+        return jsonify({"message": "Movie created successfully",
+                        'success': True,
+                        "movie": movie}), 201
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/movies/<int:movie_id>", methods=["PATCH"])
+def endpoint_patch_movie(movie_id: int):
+    """Endpoint patch movie"""
+    data = request.get_json
+    title = data.get("title")
+    release_date = data.get("release_date")
+    genre = data.get("genre")
+    actors = data.get("actors")
+    overview = data.get("overview")
+    status = data.get("status")
+    budget = data.get("budget")
+    revenue = data.get("revenue")
+    country = data.get("country")
+    language = data.get("language")
+
+    if not all([title, release_date, genre, actors, overview,
+                status, budget, revenue, country, language]):
+        return jsonify({"error": "No fields to update"}), 400
+
+    try:
+        movie = update_movie(title, release_date, genre, actors,
+                             overview, status, budget, revenue, country, language, movie_id)
+        return jsonify({'success': True, "movie": movie}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/movies/<int:movie_id>", methods=["GET"])
 def endpoint_get_movie(movie_id: int):
     """Endpoint get movie"""
-    if request.method == "PATCH":
-        data = request.get_json
-        title = data.get("title")
-        release_date = data.get("release_date")
-        genre = data.get("genre")
-        actors = data.get("actors")
-        overview = data.get("overview")
-        status = data.get("status")
-        budget = data.get("budget")
-        revenue = data.get("revenue")
-        country = data.get("country")
-        language = data.get("language")
+    movie = get_movie_by_id(movie_id)
 
-        if not all([title, release_date, genre, actors, overview,
-                    status, budget, revenue, country, language]):
-            return jsonify({"error": "No fields to update"}), 400
+    if not movie:
+        return jsonify({"error": "Movie not found"}), 404
 
-        try:
-            movie = update_movie(title, release_date, genre, actors,
-                                 overview, status, budget, revenue, country, language, movie_id)
-            return jsonify({'success': True, "movie": movie}), 200
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
+    return jsonify(movie), 200
 
-    elif request.method == "GET":
 
-        movie = get_movie_by_id(movie_id)
+@app.route("/movies/<int:movie_id>", methods=["DELETE"])
+def endpoint_delete_movie(movie_id: int):
+    """Endpoint delete movie"""
+    success = delete_movie(movie_id)
 
-        if not movie:
-            return jsonify({"error": "Movie not found"}), 404
+    if not success:
+        return jsonify({"error": "Movie could not be deleted"}), 404
 
-        return jsonify(movie), 200
-
-    elif request.method == "DELETE":
-
-        success = delete_movie(movie_id)
-
-        if not success:
-            return jsonify({"error": "Movie could not be deleted"}), 404
-
-        return jsonify({"message": "Movie deleted"})
+    return jsonify({"message": "Movie deleted"})
 
 
 @app.route("/genres", methods=["GET"])
