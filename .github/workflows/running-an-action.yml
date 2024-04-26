@@ -95,7 +95,6 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
   
   badge:
-    needs: [deploy]
     runs-on: ubuntu-latest
     
     steps:
@@ -112,7 +111,7 @@ jobs:
         id: done_badge
         with:
           label: 'Done: '
-          status: 'Yes'
+          status: 'No'
           color: 'blue'
           path: .github/badges/done.svg
           scale: 1.5
