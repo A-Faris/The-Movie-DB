@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import pytest
 
 from monday import wave

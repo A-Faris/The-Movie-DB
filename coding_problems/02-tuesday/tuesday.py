@@ -1,4 +1,8 @@
+"""Tuesday"""
+
+
 def diamond(n: int) -> str:
+    """Diamond"""
     if n % 2 == 0 or n < 1:
         return None
 

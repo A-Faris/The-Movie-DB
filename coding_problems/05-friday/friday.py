@@ -1,4 +1,8 @@
-def is_valid_IP(strng: str) -> bool:
+"""Friday"""
+
+
+def is_valid_ip(strng: str) -> bool:
+    """is valid ip"""
     if len(strng.split(".")) != 4:
         return False
 
@@ -11,8 +15,3 @@ def is_valid_IP(strng: str) -> bool:
             return False
 
     return True
-
-
-print(is_valid_IP('12.255.56.1'))  # True
-print(is_valid_IP('12.34.56 .1'))  # False
-print(is_valid_IP('123.045.067.089'))  # False

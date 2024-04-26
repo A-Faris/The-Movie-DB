@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import pytest
 
 from tuesday import diamond

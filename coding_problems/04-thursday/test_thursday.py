@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 import pytest
 
 from thursday import pyramid

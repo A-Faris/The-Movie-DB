@@ -1,3 +1,4 @@
+# pylint: skip-file
 import pytest
 
 from friday import is_valid_IP
