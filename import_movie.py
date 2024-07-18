@@ -2,16 +2,18 @@
 
 import csv
 from os import environ
+
 from rich.progress import track
 from dotenv import load_dotenv
-import psycopg2.extras
+from psycopg2 import connect
+from psycopg2.extras import RealDictCursor
 from psycopg2.extensions import connection
 
 
 def get_connection() -> connection:
     """Get connection"""
     load_dotenv()
-    return psycopg2.connect(
+    return connect(
         user=environ["DATABASE_USERNAME"],
         password=environ["DATABASE_PASSWORD"],
         host=environ["DATABASE_IP"],
@@ -32,8 +34,7 @@ def get_id(cur, value, table, attribute, table_id):
                 VALUES (%s)
                 ON CONFLICT DO NOTHING""", (value.strip(),))
 
-    cur.execute(f"""SELECT {table_id}
-                FROM {table}
+    cur.execute(f"""SELECT {table_id} FROM {table}
                 WHERE {attribute} = %s""", (value.strip(),))
 
     return cur.fetchone()[table_id]
@@ -57,59 +58,58 @@ def get_movie_id(cur, title, date, score, overview, orig_title,
     return cur.fetchone()['movie_id']
 
 
-def import_movies_to_database(movies: list[dict]):
+def import_movies_to_database(movies: list[dict]) -> list[dict]:
     """Import movies to database"""
     conn = get_connection()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
 
-    for movie in track(movies, description="Adding movies"):
-        language_id = get_id(
-            cur, movie["language"], "languages", "language", "language_id")
+        for movie in track(movies, description="Adding movies"):
+            language_id = get_id(
+                cur, movie["language"], "languages", "language", "language_id")
 
-        country_id = get_id(
-            cur, movie["country"], "countries", "country", "country_id")
+            country_id = get_id(
+                cur, movie["country"], "countries", "country", "country_id")
 
-        movie_id = get_movie_id(
-            cur, movie["title"],
-            movie["release_date"],
-            movie["score"],
-            movie["overview"],
-            movie["orig_title"],
-            movie["status"],
-            language_id,
-            movie["budget"],
-            movie["revenue"],
-            country_id)
+            movie_id = get_movie_id(
+                cur, movie["title"],
+                movie["release_date"],
+                movie["score"],
+                movie["overview"],
+                movie["orig_title"],
+                movie["status"],
+                language_id,
+                movie["budget"],
+                movie["revenue"],
+                country_id)
 
-        genres = movie["genre"].split(",")
+            genres = movie["genre"].split(",")
 
-        genre_ids = [get_id(cur, genre, "genres", "genre", "genre_id")
-                     for genre in genres]
+            genre_ids = [get_id(cur, genre, "genres", "genre", "genre_id")
+                         for genre in genres]
 
-        for genre_id in genre_ids:
-            cur.execute(
-                f"""INSERT INTO genre_assignment(movie_id, genre_id)
-                VALUES ({movie_id}, {genre_id})""")
+            for genre_id in genre_ids:
+                cur.execute(
+                    f"""INSERT INTO genre_assignment(movie_id, genre_id)
+                    VALUES ({movie_id}, {genre_id})""")
 
-        crew = movie["crew"].split(",")
+            crew = movie["crew"].split(",")
 
-        actor_ids = [get_id(cur, actor, "actors", "actor", "actor_id")
-                     for actor in crew[::2]]
+            actor_ids = [get_id(cur, actor, "actors", "actor", "actor_id")
+                         for actor in crew[::2]]
 
-        role_ids = [get_id(cur, role, "roles", "role", "role_id")
-                    for role in crew[1::2]]
+            role_ids = [get_id(cur, role, "roles", "role", "role_id")
+                        for role in crew[1::2]]
 
-        for actor_id, role_id in zip(actor_ids, role_ids):
-            cur.execute(
-                f"""INSERT INTO crew_assignment(movie_id, actor_id, role_id)
-                VALUES ({movie_id}, {actor_id}, {role_id})""")
+            for actor_id, role_id in zip(actor_ids, role_ids):
+                cur.execute(
+                    f"""INSERT INTO crew_assignment(movie_id, actor_id, role_id)
+                    VALUES ({movie_id}, {actor_id}, {role_id})""")
 
-    conn.commit()
+        conn.commit()
 
-    cur.execute("SELECT * FROM movies")
-    print(cur.fetchall())
+        cur.execute("SELECT * FROM movies")
+        print(cur.fetchall())
 
-    cur.close()
     conn.close()
     return movies
 
